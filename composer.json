@@ -1,0 +1,26 @@
+{
+    "name": "imper86/supervisor-bundle",
+    "description": "Symfony bundle to create/update supervisor configurations and control supervisor process",
+    "type": "symfony-bundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "imper",
+            "email": "me@imper.info"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "symfony/config": "^4.3",
+        "symfony/yaml": "^4.3",
+        "symfony/dependency-injection": "^4.3",
+        "symfony/http-kernel": "^4.3",
+        "symfony/process": "^4.3",
+        "symfony/console": "^4.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Imper86\\SupervisorBundle\\": "src"
+        }
+    }
+}

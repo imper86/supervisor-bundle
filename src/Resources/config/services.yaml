@@ -1,0 +1,19 @@
+services:
+    Imper86\SupervisorBundle\Service\ConfigGeneratorInterface:
+        class: Imper86\SupervisorBundle\Service\ConfigGenerator
+        arguments:
+            $config: ~
+            $parameterBag: '@parameter_bag'
+
+    Imper86\SupervisorBundle\Service\OperatorInterface:
+        class: Imper86\SupervisorBundle\Service\Operator
+        autoconfigure: true
+        autowire: true
+
+    Imper86\SupervisorBundle\Command\SupervisorRebuildCommand:
+        autowire: true
+        autoconfigure: true
+
+    Imper86\SupervisorBundle\Command\SupervisorControlCommand:
+        autowire: true
+        autoconfigure: true

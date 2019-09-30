@@ -70,16 +70,24 @@ CONFIG;
         $executable = $this->parameterBag->get('kernel.project_dir') . '/./bin/console';
 
         foreach ($this->config['commands'] as $commandConfig) {
+            $v2s = function (bool $val): string {
+                return $val ? 'true' : 'false';
+            };
+
+            if (empty($commandConfig['worker_name'])) {
+                $commandConfig['worker_name'] = sha1($commandConfig['command']);
+            }
+
             $config = <<<CONFIG
 [program:{$commandConfig['worker_name']}]
 command={$executable} {$commandConfig['command']}
 process_name=%(program_name)s%(process_num)02d
-numprocs=1
-startsecs=0
-autorestart=true
-stopsignal=INT
-stopasgroup=true
-stopwaitsecs=60
+numprocs={$commandConfig['numprocs']}
+startsecs={$commandConfig['startsecs']}
+autorestart={$v2s($commandConfig['autorestart'])}
+stopsignal={$commandConfig['stopsignal']}
+stopasgroup={$v2s($commandConfig['stopasgroup'])}
+stopwaitsecs={$commandConfig['stopwaitsecs']}
 stdout_logfile={$rootDir}/logs/{$commandConfig['worker_name']}_stdout.log
 stderr_logfile={$rootDir}/logs/{$commandConfig['worker_name']}_stderr.log
 CONFIG;

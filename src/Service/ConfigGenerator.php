@@ -53,7 +53,7 @@ file={$rootDir}/supervisor.sock
 chmod=0700
 
 [supervisord]
-logfile={$rootDir}/supervisord.log
+logfile={$rootDir}/logs/supervisord.log
 pidfile={$rootDir}/supervisor.pid
 
 [rpcinterface:supervisor]

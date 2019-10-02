@@ -12,7 +12,6 @@ services:
             $parameterBag: '@parameter_bag'
 
     Imper86\SupervisorBundle\Command\SupervisorRebuildCommand:
-        class: Imper86\SupervisorBundle\Command\SupervisorRebuildCommand
         arguments:
             $config: ~
             $configGenerator: '@Imper86\SupervisorBundle\Service\ConfigGeneratorInterface'
@@ -20,8 +19,19 @@ services:
         tags: ['console.command']
 
     Imper86\SupervisorBundle\Command\SupervisorControlCommand:
-        class: Imper86\SupervisorBundle\Command\SupervisorControlCommand
         arguments:
             $config: ~
             $operator: '@Imper86\SupervisorBundle\Service\OperatorInterface'
+        tags: ['console.command']
+
+    Imper86\SupervisorBundle\Command\SupervisorCleanDirsCommand:
+        arguments:
+            $config: ~
+            $parameterBag: '@parameter_bag'
+        tags: ['console.command']
+
+    Imper86\SupervisorBundle\Command\SupervisorCleanLogsCommand:
+        arguments:
+            $config: ~
+            $parameterBag: '@parameter_bag'
         tags: ['console.command']

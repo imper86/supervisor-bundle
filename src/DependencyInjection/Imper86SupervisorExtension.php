@@ -8,6 +8,8 @@
 namespace Imper86\SupervisorBundle\DependencyInjection;
 
 
+use Imper86\SupervisorBundle\Command\SupervisorCleanDirsCommand;
+use Imper86\SupervisorBundle\Command\SupervisorCleanLogsCommand;
 use Imper86\SupervisorBundle\Command\SupervisorControlCommand;
 use Imper86\SupervisorBundle\Command\SupervisorRebuildCommand;
 use Imper86\SupervisorBundle\Service\ConfigGeneratorInterface;
@@ -30,17 +32,18 @@ class Imper86SupervisorExtension extends Extension
 
         $container->setParameter(SupervisorParameter::WORKSPACE_DIRECTORY, $config['workspace_directory']);
 
-        $container->getDefinition(ConfigGeneratorInterface::class)
-            ->setArgument(0, $config);
+        $injectConfigServices = [
+            ConfigGeneratorInterface::class,
+            OperatorInterface::class,
+            SupervisorRebuildCommand::class,
+            SupervisorControlCommand::class,
+            SupervisorCleanDirsCommand::class,
+            SupervisorCleanLogsCommand::class,
+        ];
 
-        $container->getDefinition(OperatorInterface::class)
-            ->setArgument(0, $config);
-
-        $container->getDefinition(SupervisorRebuildCommand::class)
-            ->setArgument(0, $config);
-
-        $container->getDefinition(SupervisorControlCommand::class)
-            ->setArgument(0, $config);
+        foreach ($injectConfigServices as $service) {
+            $container->getDefinition($service)->setArgument(0, $config);
+        }
     }
 
 }

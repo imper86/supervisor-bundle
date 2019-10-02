@@ -29,16 +29,20 @@ class ConfigGenerator implements ConfigGeneratorInterface
         $this->parameterBag = $parameterBag;
     }
 
-    public function generate(): void
+    public function generate(string $instance): void
     {
-        $rootDir = $this->parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY);
+        if (!isset($this->config['instances'][$instance])) {
+            throw new \InvalidArgumentException("Instance {$instance} is not configured");
+        }
+
+        $rootDir = $this->parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY) . "/{$instance}";
 
         Process::fromShellCommandline("rm -rf {$rootDir}/worker/*")->run();
         @mkdir("{$rootDir}/worker", 0755, true);
         @mkdir("{$rootDir}/logs", 0755, true);
 
         $this->prepareMainConfig($rootDir);
-        $this->prepareWorkerConfigs($rootDir);
+        $this->prepareWorkerConfigs($rootDir, $this->config['instances'][$instance]['commands']);
     }
 
     private function prepareMainConfig(string $rootDir): void
@@ -65,11 +69,11 @@ CONFIG;
         file_put_contents("{$rootDir}/supervisord.conf", $config);
     }
 
-    private function prepareWorkerConfigs(string $rootDir): void
+    private function prepareWorkerConfigs(string $rootDir, array $commandsConfig): void
     {
         $executable = $this->parameterBag->get('kernel.project_dir') . '/./bin/console';
 
-        foreach ($this->config['commands'] as $commandConfig) {
+        foreach ($commandsConfig as $commandConfig) {
             $v2s = function (bool $val): string {
                 return $val ? 'true' : 'false';
             };

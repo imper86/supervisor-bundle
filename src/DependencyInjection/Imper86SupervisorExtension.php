@@ -8,7 +8,10 @@
 namespace Imper86\SupervisorBundle\DependencyInjection;
 
 
+use Imper86\SupervisorBundle\Command\SupervisorControlCommand;
+use Imper86\SupervisorBundle\Command\SupervisorRebuildCommand;
 use Imper86\SupervisorBundle\Service\ConfigGeneratorInterface;
+use Imper86\SupervisorBundle\Service\OperatorInterface;
 use Imper86\SupervisorBundle\SupervisorParameter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -27,8 +30,17 @@ class Imper86SupervisorExtension extends Extension
 
         $container->setParameter(SupervisorParameter::WORKSPACE_DIRECTORY, $config['workspace_directory']);
 
-        $definition = $container->getDefinition(ConfigGeneratorInterface::class);
-        $definition->setArgument(0, $config);
+        $container->getDefinition(ConfigGeneratorInterface::class)
+            ->setArgument(0, $config);
+
+        $container->getDefinition(OperatorInterface::class)
+            ->setArgument(0, $config);
+
+        $container->getDefinition(SupervisorRebuildCommand::class)
+            ->setArgument(0, $config);
+
+        $container->getDefinition(SupervisorControlCommand::class)
+            ->setArgument(0, $config);
     }
 
 }

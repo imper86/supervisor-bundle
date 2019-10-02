@@ -18,20 +18,18 @@ class Operator implements OperatorInterface
      * @var ParameterBagInterface
      */
     private $parameterBag;
-    /**
-     * @var string
-     */
-    private $configurationPath;
+    private $config;
 
-    public function __construct(ParameterBagInterface $parameterBag)
+    public function __construct($config, ParameterBagInterface $parameterBag)
     {
         $this->parameterBag = $parameterBag;
-        $this->configurationPath = $parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY) . '/supervisord.conf';
+        $this->config = $config;
     }
 
-    public function stop(): void
+    public function stop(string $instance): void
     {
-        $pidProcess = Process::fromShellCommandline("supervisorctl --configuration={$this->configurationPath} pid");
+        $configPath = $this->getConfigurationPath($instance);
+        $pidProcess = Process::fromShellCommandline("supervisorctl --configuration={$configPath} pid");
         $pidProcess->run();
 
         if ($pidProcess->isSuccessful()) {
@@ -42,18 +40,35 @@ class Operator implements OperatorInterface
         }
     }
 
-    public function start(): void
+    public function start(string $instance): void
     {
-        $startProcess = Process::fromShellCommandline("supervisord --configuration={$this->configurationPath}");
+        $this->stop($instance);
+
+        $configPath = $this->getConfigurationPath($instance);
+        $startProcess = Process::fromShellCommandline("supervisord --configuration={$configPath}");
         $startProcess->run();
     }
 
-    public function status(): string
+    public function restart(string $instance): void
     {
-        $statusProcess = Process::fromShellCommandline("supervisorctl --configuration={$this->configurationPath} status");
+        $this->start($instance);
+    }
+
+    public function status(string $instance): ?string
+    {
+        $configPath = $this->getConfigurationPath($instance);
+        $statusProcess = Process::fromShellCommandline("supervisorctl --configuration={$configPath} status");
         $statusProcess->run();
 
         return $statusProcess->isSuccessful() ? $statusProcess->getOutput() : $statusProcess->getErrorOutput();
     }
 
+    private function getConfigurationPath(string $instance): string
+    {
+        if (!isset($this->config['instances'][$instance])) {
+            throw new \InvalidArgumentException("Instance {$instance} is not defined");
+        }
+
+        return $this->parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY) . "/{$instance}/supervisord.conf";
+    }
 }

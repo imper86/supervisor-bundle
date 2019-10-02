@@ -10,9 +10,11 @@ namespace Imper86\SupervisorBundle\Service;
 
 interface OperatorInterface
 {
-    public function stop(): void;
+    public function stop(string $instance): void;
 
-    public function start(): void;
+    public function start(string $instance): void;
 
-    public function status(): string;
+    public function restart(string $instance): void;
+
+    public function status(string $instance): ?string;
 }

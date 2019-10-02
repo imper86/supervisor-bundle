@@ -21,18 +21,50 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('workspace_directory')->defaultValue('%kernel.project_dir%/var/imper86supervisor/%kernel.environment%')->end()
-                ->arrayNode('commands')
-                    ->defaultValue([])
+                ->arrayNode('instances')
+                    ->useAttributeAsKey('name', false)
+                    ->beforeNormalization()
+                        ->always()
+                        ->then(function ($v) {
+                            foreach ($v as $instanceName => $config) {
+                                if (!isset($config['name'])) {
+                                    $v[$instanceName]['name'] = $instanceName;
+                                }
+                            }
+
+                            return $v;
+                        })
+                    ->end()
                     ->arrayPrototype()
                         ->children()
-                            ->scalarNode('command')->isRequired()->cannotBeEmpty()->end()
-                            ->scalarNode('worker_name')->defaultNull()->end()
-                            ->integerNode('numprocs')->defaultValue(1)->end()
-                            ->integerNode('startsecs')->defaultValue(0)->end()
-                            ->booleanNode('autorestart')->defaultTrue()->end()
-                            ->scalarNode('stopsignal')->defaultValue('INT')->end()
-                            ->booleanNode('stopasgroup')->defaultTrue()->end()
-                            ->integerNode('stopwaitsecs')->defaultValue(60)->end()
+                            ->scalarNode('name')->isRequired()->cannotBeEmpty()->end()
+                            ->arrayNode('commands')
+                                ->useAttributeAsKey('worker_name', false)
+                                ->beforeNormalization()
+                                    ->always()
+                                    ->then(function ($v) {
+                                        foreach ($v as $workerName => $config) {
+                                            if (!isset($config['worker_name'])) {
+                                                $v[$workerName]['worker_name'] = $workerName;
+                                            }
+                                        }
+
+                                        return $v;
+                                    })
+                                ->end()
+                                ->arrayPrototype()
+                                    ->children()
+                                        ->scalarNode('command')->isRequired()->cannotBeEmpty()->end()
+                                        ->scalarNode('worker_name')->isRequired()->cannotBeEmpty()->end()
+                                        ->integerNode('numprocs')->defaultValue(1)->end()
+                                        ->integerNode('startsecs')->defaultValue(0)->end()
+                                        ->booleanNode('autorestart')->defaultTrue()->end()
+                                        ->scalarNode('stopsignal')->defaultValue('INT')->end()
+                                        ->booleanNode('stopasgroup')->defaultTrue()->end()
+                                        ->integerNode('stopwaitsecs')->defaultValue(60)->end()
+                                    ->end()
+                                ->end()
+                            ->end()
                         ->end()
                     ->end()
                 ->end()

@@ -10,5 +10,5 @@ namespace Imper86\SupervisorBundle\Service;
 
 interface ConfigGeneratorInterface
 {
-    public function generate(): void;
+    public function generate(string $instance): void;
 }

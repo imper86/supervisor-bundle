@@ -8,6 +8,7 @@
 namespace Imper86\SupervisorBundle\Command;
 
 
+use Imper86\SupervisorBundle\Helper\ProcessHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -44,8 +45,8 @@ class SupervisorCleanLogsCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         foreach (array_keys($this->config['instances'] ?? []) as $instance) {
-            Process::fromShellCommandline("rm {$this->workspace}/{$instance}/logs/*")->run();
-            Process::fromShellCommandline("rm {$this->workspace}/{$instance}/supervisord.log")->run();
+            ProcessHelper::generate("rm {$this->workspace}/{$instance}/logs/*")->run();
+            ProcessHelper::generate("rm {$this->workspace}/{$instance}/supervisord.log")->run();
         }
 
         $io->success('Removed all log files');

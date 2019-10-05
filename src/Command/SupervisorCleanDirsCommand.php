@@ -8,12 +8,12 @@
 namespace Imper86\SupervisorBundle\Command;
 
 
+use Imper86\SupervisorBundle\Helper\ProcessHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Process\Process;
 
 class SupervisorCleanDirsCommand extends Command
 {
@@ -56,7 +56,8 @@ class SupervisorCleanDirsCommand extends Command
         if (!empty($dirsToRemove)) {
             foreach ($dirsToRemove as $dir) {
                 if ('yes' === $io->ask("Do you really want to remove {$dir}?", 'yes')) {
-                    Process::fromShellCommandline("rm -rf {$dir}")->run();
+                    ProcessHelper::generate("rm -rf {$dir}")->run();
+
                     $io->warning("Removed {$dir}");
                 }
             }

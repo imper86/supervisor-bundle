@@ -1,5 +1,7 @@
 # supervisor-bundle
-Symfony bundle to create/update supervisor configurations and control supervisor process
+Symfony bundle to create/update supervisor configurations and control supervisor process.
+
+This bundle was heavily inspired by [phobetor/rabbitmq-supervisor-bundle](https://github.com/Phobetor/rabbitmq-supervisor-bundle).
 
 ## Installation
 Install with composer:

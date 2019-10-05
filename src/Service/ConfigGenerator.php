@@ -8,6 +8,7 @@
 namespace Imper86\SupervisorBundle\Service;
 
 
+use Imper86\SupervisorBundle\Helper\ProcessHelper;
 use Symfony\Component\Process\Process;
 
 class ConfigGenerator implements ConfigGeneratorInterface
@@ -40,7 +41,7 @@ class ConfigGenerator implements ConfigGeneratorInterface
 
         $rootDir = $this->workspace . "/{$instance}";
 
-        Process::fromShellCommandline("rm -rf {$rootDir}/worker/*")->run();
+        ProcessHelper::generate("rm -rf {$rootDir}/worker/*")->run();
         @mkdir("{$rootDir}/worker", 0755, true);
         @mkdir("{$rootDir}/logs", 0755, true);
 

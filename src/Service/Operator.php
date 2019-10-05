@@ -8,6 +8,7 @@
 namespace Imper86\SupervisorBundle\Service;
 
 
+use Imper86\SupervisorBundle\Helper\ProcessHelper;
 use Symfony\Component\Process\Process;
 
 class Operator implements OperatorInterface
@@ -30,13 +31,13 @@ class Operator implements OperatorInterface
     public function stop(string $instance): void
     {
         $configPath = $this->getConfigurationPath($instance);
-        $pidProcess = Process::fromShellCommandline("supervisorctl --configuration={$configPath} pid");
+        $pidProcess = ProcessHelper::generate("supervisorctl --configuration={$configPath} pid");
         $pidProcess->run();
 
         if ($pidProcess->isSuccessful()) {
             $pid = $pidProcess->getOutput();
 
-            $killProcess = Process::fromShellCommandline("kill {$pid}");
+            $killProcess = ProcessHelper::generate("kill {$pid}");
             $killProcess->run();
         }
     }
@@ -46,7 +47,7 @@ class Operator implements OperatorInterface
         $this->stop($instance);
 
         $configPath = $this->getConfigurationPath($instance);
-        $startProcess = Process::fromShellCommandline("supervisord --configuration={$configPath}");
+        $startProcess = ProcessHelper::generate("supervisord --configuration={$configPath}");
         $startProcess->run();
     }
 
@@ -58,7 +59,7 @@ class Operator implements OperatorInterface
     public function status(string $instance): ?string
     {
         $configPath = $this->getConfigurationPath($instance);
-        $statusProcess = Process::fromShellCommandline("supervisorctl --configuration={$configPath} status");
+        $statusProcess = ProcessHelper::generate("supervisorctl --configuration={$configPath} status");
         $statusProcess->run();
 
         return $statusProcess->isSuccessful() ? $statusProcess->getOutput() : $statusProcess->getErrorOutput();

@@ -8,28 +8,30 @@
 namespace Imper86\SupervisorBundle\Command;
 
 
-use Imper86\SupervisorBundle\SupervisorParameter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Process\Process;
 
 class SupervisorCleanLogsCommand extends Command
 {
     public static $defaultName = 'i86:supervisor:clean:logs';
+
+    /**
+     * @var array
+     */
     private $config;
     /**
-     * @var ParameterBagInterface
+     * @var string
      */
-    private $parameterBag;
+    private $workspace;
 
-    public function __construct($config, ParameterBagInterface $parameterBag)
+    public function __construct($config, string $workspace)
     {
         parent::__construct(self::$defaultName);
         $this->config = $config;
-        $this->parameterBag = $parameterBag;
+        $this->workspace = $workspace;
     }
 
     protected function configure()
@@ -40,11 +42,10 @@ class SupervisorCleanLogsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $workspaceDir = $this->parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY);
 
         foreach (array_keys($this->config['instances'] ?? []) as $instance) {
-            Process::fromShellCommandline("rm {$workspaceDir}/{$instance}/logs/*")->run();
-            Process::fromShellCommandline("rm {$workspaceDir}/{$instance}/supervisord.log")->run();
+            Process::fromShellCommandline("rm {$this->workspace}/{$instance}/logs/*")->run();
+            Process::fromShellCommandline("rm {$this->workspace}/{$instance}/supervisord.log")->run();
         }
 
         $io->success('Removed all log files');

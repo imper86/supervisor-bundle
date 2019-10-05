@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Imper86\SupervisorBundle\Command\SupervisorCleanDirsCommand" public="false" autowire="false" autoconfigure="false">
+            <argument key="$config" />
+            <argument key="$workspace">%imper86supervisor.workspace_directory%</argument>
+            <tag name="console.command" />
+        </service>
+
+        <service id="Imper86\SupervisorBundle\Command\SupervisorCleanLogsCommand" public="false" autowire="false" autoconfigure="false">
+            <argument key="$config" />
+            <argument key="$workspace">%imper86supervisor.workspace_directory%</argument>
+            <tag name="console.command" />
+        </service>
+
+        <service id="Imper86\SupervisorBundle\Command\SupervisorControlCommand" public="false" autowire="false" autoconfigure="false">
+            <argument key="$config" />
+            <argument key="$operator" type="service" id="Imper86\SupervisorBundle\Service\OperatorInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="Imper86\SupervisorBundle\Command\SupervisorRebuildCommand" public="false" autowire="false" autoconfigure="false">
+            <argument key="$config" />
+            <argument key="$configGenerator" type="service" id="Imper86\SupervisorBundle\Service\ConfigGeneratorInterface" />
+            <argument key="$operator" type="service" id="Imper86\SupervisorBundle\Service\OperatorInterface" />
+            <tag name="console.command" />
+        </service>
+
+        <service id="Imper86\SupervisorBundle\Service\ConfigGeneratorInterface" class="Imper86\SupervisorBundle\Service\ConfigGenerator" public="false" autowire="false" autoconfigure="false">
+            <argument key="$config" />
+            <argument key="$workspace">%imper86supervisor.workspace_directory%</argument>
+            <argument key="$projectDir">%kernel.project_dir%</argument>
+        </service>
+
+        <service id="Imper86\SupervisorBundle\Service\OperatorInterface" class="Imper86\SupervisorBundle\Service\Operator" public="false" autowire="false" autoconfigure="false">
+            <argument key="$config" />
+            <argument key="$workspace">%imper86supervisor.workspace_directory%</argument>
+        </service>
+    </services>
+</container>

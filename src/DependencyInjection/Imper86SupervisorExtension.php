@@ -17,20 +17,22 @@ use Imper86\SupervisorBundle\Service\OperatorInterface;
 use Imper86\SupervisorBundle\SupervisorParameter;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class Imper86SupervisorExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-        $loader->load('services.yaml');
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+        $loader->load('services.xml');
 
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
         $container->setParameter(SupervisorParameter::WORKSPACE_DIRECTORY, $config['workspace_directory']);
+
+        dump($config['workspace_directory']);
 
         $injectConfigServices = [
             ConfigGeneratorInterface::class,
@@ -45,5 +47,4 @@ class Imper86SupervisorExtension extends Extension
             $container->getDefinition($service)->setArgument(0, $config);
         }
     }
-
 }

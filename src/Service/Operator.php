@@ -8,22 +8,23 @@
 namespace Imper86\SupervisorBundle\Service;
 
 
-use Imper86\SupervisorBundle\SupervisorParameter;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Process\Process;
 
 class Operator implements OperatorInterface
 {
     /**
-     * @var ParameterBagInterface
+     * @var array
      */
-    private $parameterBag;
     private $config;
+    /**
+     * @var string
+     */
+    private $workspace;
 
-    public function __construct($config, ParameterBagInterface $parameterBag)
+    public function __construct(array $config, string $workspace)
     {
-        $this->parameterBag = $parameterBag;
         $this->config = $config;
+        $this->workspace = $workspace;
     }
 
     public function stop(string $instance): void
@@ -69,6 +70,6 @@ class Operator implements OperatorInterface
             throw new \InvalidArgumentException("Instance {$instance} is not defined");
         }
 
-        return $this->parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY) . "/{$instance}/supervisord.conf";
+        return "{$this->workspace}/{$instance}/supervisord.conf";
     }
 }

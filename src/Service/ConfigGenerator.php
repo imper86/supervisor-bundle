@@ -8,8 +8,6 @@
 namespace Imper86\SupervisorBundle\Service;
 
 
-use Imper86\SupervisorBundle\SupervisorParameter;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Process\Process;
 
 class ConfigGenerator implements ConfigGeneratorInterface
@@ -19,14 +17,19 @@ class ConfigGenerator implements ConfigGeneratorInterface
      */
     private $config;
     /**
-     * @var ParameterBagInterface
+     * @var string
      */
-    private $parameterBag;
+    private $workspace;
+    /**
+     * @var string
+     */
+    private $projectDir;
 
-    public function __construct(array $config, ParameterBagInterface $parameterBag)
+    public function __construct(array $config, string $workspace, string $projectDir)
     {
         $this->config = $config;
-        $this->parameterBag = $parameterBag;
+        $this->workspace = $workspace;
+        $this->projectDir = $projectDir;
     }
 
     public function generate(string $instance): void
@@ -35,7 +38,7 @@ class ConfigGenerator implements ConfigGeneratorInterface
             throw new \InvalidArgumentException("Instance {$instance} is not configured");
         }
 
-        $rootDir = $this->parameterBag->get(SupervisorParameter::WORKSPACE_DIRECTORY) . "/{$instance}";
+        $rootDir = $this->workspace . "/{$instance}";
 
         Process::fromShellCommandline("rm -rf {$rootDir}/worker/*")->run();
         @mkdir("{$rootDir}/worker", 0755, true);
@@ -71,7 +74,7 @@ CONFIG;
 
     private function prepareWorkerConfigs(string $rootDir, array $commandsConfig): void
     {
-        $executable = $this->parameterBag->get('kernel.project_dir') . '/./bin/console';
+        $executable = $this->projectDir . '/./bin/console';
 
         foreach ($commandsConfig as $commandConfig) {
             $v2s = function (bool $val): string {

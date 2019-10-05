@@ -17,7 +17,13 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('imper86_supervisor');
 
-        $treeBuilder->getRootNode()
+        if (method_exists($treeBuilder, 'getRootNode')) {
+            $rootNode = $treeBuilder->getRootNode();
+        } else {
+            $rootNode = $treeBuilder->root('imper86_supervisor');
+        }
+
+        $rootNode
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('workspace_directory')->defaultValue('%kernel.project_dir%/var/imper86supervisor/%kernel.environment%')->end()

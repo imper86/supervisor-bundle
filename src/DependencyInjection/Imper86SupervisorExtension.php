@@ -32,8 +32,6 @@ class Imper86SupervisorExtension extends Extension
 
         $container->setParameter(SupervisorParameter::WORKSPACE_DIRECTORY, $config['workspace_directory']);
 
-        dump($config['workspace_directory']);
-
         $injectConfigServices = [
             ConfigGeneratorInterface::class,
             OperatorInterface::class,

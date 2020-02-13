@@ -27,6 +27,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('workspace_directory')->defaultValue('%kernel.project_dir%/var/imper86supervisor/%kernel.environment%')->end()
+                ->scalarNode('php_executable')->defaultValue('php')->end()
                 ->arrayNode('instances')
                     ->useAttributeAsKey('name', false)
                     ->beforeNormalization()

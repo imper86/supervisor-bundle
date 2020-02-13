@@ -9,7 +9,7 @@ namespace Imper86\SupervisorBundle\Service;
 
 
 use Imper86\SupervisorBundle\Helper\ProcessHelper;
-use Symfony\Component\Process\Process;
+use InvalidArgumentException;
 
 class ConfigGenerator implements ConfigGeneratorInterface
 {
@@ -36,7 +36,7 @@ class ConfigGenerator implements ConfigGeneratorInterface
     public function generate(string $instance): void
     {
         if (!isset($this->config['instances'][$instance])) {
-            throw new \InvalidArgumentException("Instance {$instance} is not configured");
+            throw new InvalidArgumentException("Instance {$instance} is not configured");
         }
 
         $rootDir = $this->workspace . "/{$instance}";
@@ -75,7 +75,7 @@ CONFIG;
 
     private function prepareWorkerConfigs(string $rootDir, array $commandsConfig): void
     {
-        $executable = $this->projectDir . '/./bin/console';
+        $executable = sprintf('%s %s/bin/console', $this->config['php_executable'], $this->projectDir);
 
         foreach ($commandsConfig as $commandConfig) {
             $v2s = function (bool $val): string {

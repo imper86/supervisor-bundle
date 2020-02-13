@@ -62,5 +62,7 @@ class SupervisorCleanDirsCommand extends Command
                 }
             }
         }
+
+        return 0;
     }
 }

@@ -13,7 +13,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Process\Process;
 
 class SupervisorCleanLogsCommand extends Command
 {
@@ -50,5 +49,7 @@ class SupervisorCleanLogsCommand extends Command
         }
 
         $io->success('Removed all log files');
+
+        return 0;
     }
 }

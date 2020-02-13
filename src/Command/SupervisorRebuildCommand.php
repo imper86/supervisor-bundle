@@ -71,5 +71,7 @@ class SupervisorRebuildCommand extends Command
                 $io->success("[{$instance}] Started workers");
             }
         }
+
+        return 0;
     }
 }

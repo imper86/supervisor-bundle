@@ -80,5 +80,7 @@ class SupervisorControlCommand extends Command
                     $io->error('Wrong type argument');
             }
         }
+
+        return 0;
     }
 }
